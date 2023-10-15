@@ -1,0 +1,21 @@
+{
+  "name": "employee-database-management-system",
+  "version": "1.0.0",
+  "description": "manage your employees with this simple database system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "database",
+    "mysql",
+    "javascript"
+  ],
+  "author": "Anders Newgard",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.2.5",
+    "inquirer": "^8.2.4"
+  }
+}
