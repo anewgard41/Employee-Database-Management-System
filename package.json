@@ -4,7 +4,8 @@
   "description": "manage your employees with this simple database system",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "keywords": [
     "database",
@@ -14,8 +15,9 @@
   "author": "Anders Newgard",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^16.3.1",
     "express": "^4.17.1",
-    "mysql2": "^2.2.5",
-    "inquirer": "^7.3.3"
+    "inquirer": "^8.2.4",
+    "mysql2": "^2.2.5"
   }
 }
