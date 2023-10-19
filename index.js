@@ -72,6 +72,10 @@ function loadMainPrompts() {
                     value: "REMOVE_DEPARTMENT"
                 },
                 {
+                    name: "View Department Budgets",
+                    value: "VIEW_DEPARTMENT_BUDGETS"
+                },
+                {
                     name: "Quit",
                     value: "QUIT"
                 }
@@ -120,6 +124,9 @@ function loadMainPrompts() {
             case "REMOVE_ROLE":
                 removeRole();
                 break;
+            case "VIEW_DEPARTMENT_BUDGETS":
+                viewDepartmentBudgets();
+                break;
             default:
                 quit();
         }
@@ -127,6 +134,7 @@ function loadMainPrompts() {
 }
 
 // For all the below functions, we use the db helper methods created in db/index.js to query the database. 
+// The map method is used frequently in the below functions to create arrays of objects that can be used in the prompt method.
 
 // View all employees in the database
 function viewEmployees() {
@@ -186,13 +194,16 @@ function viewEmployeesByManager() {
                     choices: managerChoices
                 }
             ])
+                // We use the findAllEmployeesByManager method to query the database and return all employees with the selected manager's id.
                 .then(res => db.findAllEmployeesByManager(res.managerId))
                 .then(([rows]) => {
                     let employees = rows;
                     console.log("\n");
 
+                    // If the selected employee has no direct reports, a message will be displayed.
                     if (employees.length === 0) {
                         console.log("The selected employee has no direct reports");
+
                     } else {
                         console.table(employees);
                     }
@@ -241,7 +252,8 @@ function addEmployee() {
                                         name: `${first_name} ${last_name}`,
                                         value: id
                                     }));
-
+                                    
+                                    // Here we add a "None" option to the managerChoices array using the unshift method, so that the user can select "None" if the employee has no manager.
                                     managerChoices.unshift({ name: "None", value: null });
 
                                     prompt({
@@ -270,7 +282,7 @@ function addEmployee() {
         })
 }
 
-// Remove an employee from the database using their id. 
+// Remove an employee from the database using their id. Using the findAllEmployees method, we can display all employees in the database, and then remove the selected employee using the removeEmployee method.
 function removeEmployee() {
     db.findAllEmployees()
         .then(([rows]) => {
@@ -337,5 +349,196 @@ function updateEmployeeRole() {
                 })
         })
 }
+
+// Update an employee's manager in the database.
+
+function updateEmployeeManager() {
+    db.findAllEmployees()
+        .then(([rows]) => {
+            let employees = rows;
+            const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id
+            }));
+
+            prompt([
+                {
+                    type: "list",
+                    name: "employeeId",
+                    message: "Which employee's manager do you want to update?",
+                    choices: employeeChoices
+                }
+            ])
+                .then(res => {
+                    let employeeId = res.employeeId;
+
+                    db.findAllPossibleManagers(employeeId)
+                        .then(([rows]) => {
+                            let managers = rows;
+                            const managerChoices = managers.map(({ id, first_name, last_name }) => ({
+                                name: `${first_name} ${last_name}`,
+                                value: id
+                            }));
+
+                            prompt([
+                                {
+                                    type: "list",
+                                    name: "managerId",
+                                    message: "Which employee do you want to set as manager for the selected employee?",
+                                    choices: managerChoices
+                                }
+                            ])
+                                .then(res => db.updateEmployeeManager(employeeId, res.managerId))
+                                .then(() => console.log("Updated employee's manager"))
+                                .then(() => loadMainPrompts())
+                        })
+                })
+        })
+}
+
+// View all roles in the database.
+
+function viewRoles() {
+    db.findAllRoles()
+        .then(([rows]) => {
+            let roles = rows;
+            console.log("\n");
+            console.table(roles);
+        })
+        .then(() => loadMainPrompts());
+}
+
+// Add a role to the database. 
+
+function addRole() {
+    db.findAllDepartments()
+        .then(([rows]) => {
+            let departments = rows;
+            const departmentChoices = departments.map(({ id, name }) => ({
+                name: name,
+                value: id
+            }));
+
+            prompt([
+                {
+                    name: "title",
+                    message: "What is the name of the role?"
+                },
+                {
+                    name: "salary",
+                    message: "What is the salary of the role?"
+                },
+                {
+                    type: "list",
+                    name: "department_id",
+                    message: "Which department does the role belong to?",
+                    choices: departmentChoices
+                }
+            ])
+                .then(role => {
+                    db.createRole(role);
+                })
+                .then(() => console.log(`Added role to the database`))
+                .then(() => loadMainPrompts())
+        })
+}
+
+// Remove a role from the database. Using the findAllRoles method, we can display all roles in the database, and then remove the selected role using the removeRole method.
+
+function removeRole() {
+    db.findAllRoles()
+        .then(([rows]) => {
+            let roles = rows;
+            const roleChoices = roles.map(({ id, title }) => ({
+                name: title,
+                value: id
+            }));
+
+            prompt([
+                {
+                    type: "list",
+                    name: "roleId",
+                    message: "Which role do you want to remove?",
+                    choices: roleChoices
+                }
+            ])
+                .then(res => db.removeRole(res.roleId))
+                .then(() => console.log("Removed role from the database"))
+                .then(() => loadMainPrompts())
+        })
+}
+
+// View all departments in the database.
+
+function viewDepartments() {
+    db.findAllDepartments()
+    .then(([rows]) => {
+        let departments = rows;
+        console.log("\n");
+        console.table(departments);
+    })
+    .then(() => loadMainPrompts());
+}
+
+// Add a department to the database. This is simpler than adding a new employee, as we only need to add the name of the department, and no salary/manager information. 
+
+function addDepartment() {
+    prompt([
+        {
+            name: "name",
+            message: "What is the name of the department?"
+        }
+    ])
+        .then(res => {
+            let name = res;
+            db.createDepartment(name);
+        })
+        .then(() => console.log(`Added department to the database`))
+        .then(() => loadMainPrompts())
+}
+
+// Remove a department from the database. Using the findAllDepartments method, we can display all departments in the database, and then remove the selected department using the removeDepartment method.
+
+function removeDepartment() {
+    db.findAllDepartments()
+        .then(([rows]) => {
+            let departments = rows;
+            const departmentChoices = departments.map(({ id, name }) => ({
+                name: name,
+                value: id
+            }));
+
+            prompt([
+                {
+                    type: "list",
+                    name: "departmentId",
+                    message: "Which department do you want to remove?",
+                    choices: departmentChoices
+                }
+            ])
+                .then(res => db.removeDepartment(res.departmentId))
+                .then(() => console.log("Removed department from the database"))
+                .then(() => loadMainPrompts())
+        })
+};
+
+// View department budget using the viewDepartmentBudgets method. The budget being the combined salaries of all employees in the department. 
+
+function viewDepartmentBudgets() {
+    db.viewDepartmentBudgets()
+        .then(([rows]) => {
+            let departments = rows;
+            console.log("\n");
+            console.table(departments);
+        })
+        .then(() => loadMainPrompts());
+};
+
+// Quit the application.
+
+function quit() {
+    console.log("Thanks for stopping by. Have a great day!");
+    process.exit();
+};
 
 
