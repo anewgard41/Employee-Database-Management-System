@@ -1,6 +1,8 @@
 const { prompt } = require("inquirer");
 const db = require("./db");
 
+
+// function to initialize the application. 
 init();
 
 function init() {
@@ -131,7 +133,7 @@ function loadMainPrompts() {
 // For all the below functions, we use the db helper methods created in db/index.js to query the database. 
 // The map method is used frequently in the below functions to create arrays of objects that can be used in the prompt method.
 
-// View all employees in the database
+// View all employees in the database.
 function viewEmployees() {
     db.findAllEmployees()
         .then(([rows]) => {
@@ -142,7 +144,7 @@ function viewEmployees() {
         .then(() => loadMainPrompts());
 }
 
-// View all employees by department
+// View all employees by department.
 function viewEmployeesByDepartment() {
     db.findAllDepartments()
         .then(([rows]) => {
@@ -170,8 +172,7 @@ function viewEmployeesByDepartment() {
         })
 }
 
-// View all employees by manager 
-
+// View all employees by manager.
 function viewEmployeesByManager() {
     db.findAllEmployees()
         .then(([rows]) => {
@@ -195,7 +196,7 @@ function viewEmployeesByManager() {
                     let employees = rows;
                     console.log("\n");
 
-                    // If the selected employee has no direct reports, a message will be displayed.
+                    // If the selected employee has no direct reports, a message will be logged to the console.
                     if (employees.length === 0) {
                         console.log("The selected employee has no direct reports");
 
@@ -346,7 +347,6 @@ function updateEmployeeRole() {
 }
 
 // Update an employee's manager in the database.
-
 function updateEmployeeManager() {
     db.findAllEmployees()
         .then(([rows]) => {
@@ -392,7 +392,6 @@ function updateEmployeeManager() {
 }
 
 // View all roles in the database.
-
 function viewRoles() {
     db.findAllRoles()
         .then(([rows]) => {
@@ -404,7 +403,6 @@ function viewRoles() {
 }
 
 // Add a role to the database. 
-
 function addRole() {
     db.findAllDepartments()
         .then(([rows]) => {
@@ -439,7 +437,6 @@ function addRole() {
 }
 
 // Remove a role from the database. Using the findAllRoles method, we can display all roles in the database, and then remove the selected role using the removeRole method.
-
 function removeRole() {
     db.findAllRoles()
         .then(([rows]) => {
@@ -464,7 +461,6 @@ function removeRole() {
 }
 
 // View all departments in the database.
-
 function viewDepartments() {
     db.findAllDepartments()
     .then(([rows]) => {
@@ -476,7 +472,6 @@ function viewDepartments() {
 }
 
 // Add a department to the database. This is simpler than adding a new employee, as we only need to add the name of the department, and no salary/manager information. 
-
 function addDepartment() {
     prompt([
         {
@@ -493,7 +488,6 @@ function addDepartment() {
 }
 
 // Remove a department from the database. Using the findAllDepartments method, we can display all departments in the database, and then remove the selected department using the removeDepartment method.
-
 function removeDepartment() {
     db.findAllDepartments()
         .then(([rows]) => {
@@ -518,7 +512,6 @@ function removeDepartment() {
 };
 
 // View department budget using the viewDepartmentBudgets method. The budget being the combined salaries of all employees in the department. 
-
 function viewDepartmentBudgets() {
     db.viewDepartmentBudgets()
         .then(([rows]) => {
@@ -530,7 +523,6 @@ function viewDepartmentBudgets() {
 };
 
 // Quit the application.
-
 function quit() {
     console.log("Thanks for stopping by. Have a great day!");
     process.exit();

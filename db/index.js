@@ -14,7 +14,7 @@ class DB {
         );
     }
 
-    // find all employees except the given employee id. 
+    // Find all employees except the given employee id. 
     findAllPossibleManagers(employeeId) {
         return this.connection.promise().query(
             "SELECT id, first_name, last_name FROM employee WHERE id != ?",
@@ -51,7 +51,7 @@ class DB {
         );
     }
 
-    // Find all roles, join with departments to display the department name
+    // Find all roles, join with departments to display the department name.
     findAllRoles() {
         return this.connection.promise().query(
             "SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;"
@@ -68,7 +68,7 @@ class DB {
         return this.connection.promise().query("DELETE FROM role WHERE id = ?", roleId);
     }
 
-    // Find all departments 
+    // Find all departments. 
     findAllDepartments() {
         return this.connection.promise().query(
             "SELECT department.id, department.name FROM department;"
@@ -95,7 +95,7 @@ class DB {
         );
     }
 
-    // Find all employees in a given department, join with roles to display role titles
+    // Find all employees in a given department, join with roles to display role titles.
     findAllEmployeesByDepartment(departmentId) {
         return this.connection.promise().query(
             "SELECT employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id WHERE department.id = ?;",
