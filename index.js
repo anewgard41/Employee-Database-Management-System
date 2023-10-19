@@ -248,7 +248,7 @@ function addEmployee() {
                                         name: `${first_name} ${last_name}`,
                                         value: id
                                     }));
-                                    
+
                                     // Here we add a "None" option to the managerChoices array using the unshift method, so that the user can select "None" if the employee has no manager.
                                     managerChoices.unshift({ name: "None", value: null });
 
@@ -463,12 +463,12 @@ function removeRole() {
 // View all departments in the database.
 function viewDepartments() {
     db.findAllDepartments()
-    .then(([rows]) => {
-        let departments = rows;
-        console.log("\n");
-        console.table(departments);
-    })
-    .then(() => loadMainPrompts());
+        .then(([rows]) => {
+            let departments = rows;
+            console.log("\n");
+            console.table(departments);
+        })
+        .then(() => loadMainPrompts());
 }
 
 // Add a department to the database. This is simpler than adding a new employee, as we only need to add the name of the department, and no salary/manager information. 
@@ -527,5 +527,3 @@ function quit() {
     console.log("Thanks for stopping by. Have a great day!");
     process.exit();
 };
-
-
