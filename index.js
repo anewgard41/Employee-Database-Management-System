@@ -1,14 +1,9 @@
 const { prompt } = require("inquirer");
 const db = require("./db");
-// const logo = require("asciiart-logo");
 
 init();
 
 function init() {
-    // const logoText = logo({ name: "Employee Database Manager" }).render();
-
-    // console.log(logoText);
-
     loadMainPrompts();
 }
 
